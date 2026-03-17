@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EFG Digital Creator Suite — Tools AI untuk Stock Creator</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#03030a;--s1:#08081a;--s2:#0f0f28;
+  --b1:#141430;--b2:#1e1e50;
+  --text:#f4f4ff;--muted:#7070b0;--dim:#2a2a60;
+  --cyan:#00e5ff;--green:#00f0a0;--gold:#ffc840;
+  --purple:#9050ff;--pink:#ff4090;
+  --adobe:#fa4238;--shutter:#ff6035;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;overflow-x:hidden}
+
+/* ── NOISE ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.5}
+
+/* ── AMBIENT ORBS ── */
+.orb{position:fixed;border-radius:50%;filter:blur(120px);pointer-events:none;z-index:0;animation:orb-drift ease-in-out infinite alternate}
+.o1{width:800px;height:800px;background:radial-gradient(circle,rgba(144,80,255,.07),transparent 70%);top:-200px;right:-200px;animation-duration:18s}
+.o2{width:600px;height:600px;background:radial-gradient(circle,rgba(0,229,255,.05),transparent 70%);bottom:0;left:-100px;animation-duration:14s}
+.o3{width:500px;height:500px;background:radial-gradient(circle,rgba(255,200,64,.04),transparent 70%);top:50%;left:40%;animation-duration:22s}
+@keyframes orb-drift{to{transform:translate(60px,80px) scale(1.1)}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);background:rgba(3,3,10,.7);border-bottom:1px solid rgba(255,255,255,.04)}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:3px;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;transition:color .2s;letter-spacing:.5px}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;letter-spacing:.5px}
+.nav-cta:hover{opacity:.85;transform:translateY(-1px)}
+
+/* ── SECTIONS ── */
+section{position:relative;z-index:1}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;padding:6px 16px;border-radius:20px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);color:var(--cyan);margin-bottom:28px;animation:fadeUp .8s ease both}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,9vw,110px);letter-spacing:2px;line-height:.95;margin-bottom:24px;animation:fadeUp .8s .1s ease both}
+.ht-line1{display:block;background:linear-gradient(110deg,#fff 50%,rgba(255,255,255,.4));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ht-line2{display:block;background:linear-gradient(110deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ht-line3{display:block;color:rgba(255,255,255,.25)}
+
+.hero-sub{font-size:clamp(15px,2vw,19px);color:var(--muted);max-width:580px;line-height:1.7;margin:0 auto 44px;animation:fadeUp .8s .2s ease both}
+.hero-sub strong{color:var(--text)}
+
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;animation:fadeUp .8s .3s ease both}
+.btn-hero-primary{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;padding:16px 36px;border-radius:10px;font-size:15px;font-weight:800;text-decoration:none;transition:all .25s;letter-spacing:.5px;box-shadow:0 8px 40px rgba(0,229,255,.25)}
+.btn-hero-primary:hover{transform:translateY(-3px);box-shadow:0 12px 50px rgba(0,229,255,.35)}
+.btn-hero-ghost{border:1.5px solid var(--b2);color:var(--muted);padding:16px 32px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;transition:all .25s;letter-spacing:.5px}
+.btn-hero-ghost:hover{border-color:var(--cyan);color:var(--text)}
+
+/* hero visual */
+.hero-visual{margin-top:70px;position:relative;width:100%;max-width:860px;animation:fadeUp .8s .4s ease both}
+.hv-frame{background:var(--s1);border:1px solid var(--b2);border-radius:18px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.03)}
+.hv-bar{background:var(--s2);border-bottom:1px solid var(--b1);padding:12px 18px;display:flex;align-items:center;gap:8px}
+.hv-dot{width:10px;height:10px;border-radius:50%}
+.hv-title{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-left:8px;letter-spacing:.5px}
+.hv-body{padding:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.hv-card{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:16px;text-align:center;transition:all .3s}
+.hv-card:hover{border-color:var(--b2);transform:translateY(-3px)}
+.hv-icon{font-size:28px;margin-bottom:8px}
+.hv-name{font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1.5px;color:var(--text)}
+.hv-desc{font-size:10px;color:var(--muted);margin-top:3px;font-family:'DM Mono',monospace}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── STATS ── */
+.stats-strip{background:var(--s1);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1);padding:40px 24px}
+.stats-inner{max-width:900px;margin:0 auto;display:flex;justify-content:center;gap:0;flex-wrap:wrap}
+.stat-item{flex:1;min-width:150px;text-align:center;padding:16px 24px;border-right:1px solid var(--b1)}
+.stat-item:last-child{border-right:none}
+.si-val{font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:1px;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.si-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px}
+
+/* ── TOOLS SECTION ── */
+.tools-section{padding:100px 24px;max-width:1000px;margin:0 auto}
+.section-eyebrow{font-family:'DM Mono',monospace;font-size:11px;color:var(--cyan);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.ey-line{width:30px;height:1px;background:var(--cyan)}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(38px,5vw,60px);letter-spacing:2px;line-height:1.05;margin-bottom:14px}
+.section-sub{font-size:15px;color:var(--muted);max-width:500px;line-height:1.7;margin-bottom:56px}
+
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.tool-card{background:var(--s1);border:1.5px solid var(--b1);border-radius:18px;padding:30px;transition:all .3s;position:relative;overflow:hidden}
+.tool-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+.tool-card:hover{transform:translateY(-4px)}
+.tc-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:2px;margin-bottom:16px}
+.tc-icon{font-size:38px;margin-bottom:14px;display:block;filter:drop-shadow(0 0 12px rgba(0,229,255,.3))}
+.tc-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;margin-bottom:8px}
+.tc-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px}
+.tc-features{list-style:none;display:flex;flex-direction:column;gap:6px}
+.tc-features li{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace}
+.tc-features li::before{content:'→';color:var(--cyan);font-size:10px;flex-shrink:0}
+
+.tc-meta{border-color:rgba(250,66,56,.2)}
+.tc-meta:hover{border-color:rgba(250,66,56,.5);box-shadow:0 20px 60px rgba(250,66,56,.08)}
+.tc-meta::before{background:radial-gradient(circle at top left,rgba(250,66,56,.04),transparent 60%)}
+.tc-meta:hover::before{opacity:1}
+
+.tc-build{border-color:rgba(144,80,255,.2)}
+.tc-build:hover{border-color:rgba(144,80,255,.5);box-shadow:0 20px 60px rgba(144,80,255,.08)}
+.tc-build::before{background:radial-gradient(circle at top left,rgba(144,80,255,.04),transparent 60%)}
+.tc-build:hover::before{opacity:1}
+
+.tc-gen{border-color:rgba(255,200,64,.2)}
+.tc-gen:hover{border-color:rgba(255,200,64,.5);box-shadow:0 20px 60px rgba(255,200,64,.08)}
+.tc-gen::before{background:radial-gradient(circle at top left,rgba(255,200,64,.04),transparent 60%)}
+.tc-gen:hover::before{opacity:1}
+
+.tc-up{border-color:rgba(0,240,160,.2)}
+.tc-up:hover{border-color:rgba(0,240,160,.5);box-shadow:0 20px 60px rgba(0,240,160,.08)}
+.tc-up::before{background:radial-gradient(circle at top left,rgba(0,240,160,.04),transparent 60%)}
+.tc-up:hover::before{opacity:1}
+
+/* ── PRICING ── */
+.pricing-section{padding:100px 24px;background:var(--s1);border-top:1px solid var(--b1);border-bottom:1px solid var(--b1)}
+.pricing-inner{max-width:860px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:1fr 1.15fr 1fr;gap:20px;align-items:start}
+.price-card{background:var(--bg);border:1.5px solid var(--b1);border-radius:18px;padding:28px 24px;position:relative;transition:all .3s}
+.price-card:hover{transform:translateY(-4px)}
+.price-card.featured{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 20px 60px rgba(0,229,255,.12);background:linear-gradient(160deg,rgba(0,229,255,.04),var(--bg))}
+.pc-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;font-family:'DM Mono',monospace;font-size:10px;font-weight:700;padding:4px 14px;border-radius:20px;letter-spacing:1px;white-space:nowrap}
+.pc-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--muted);margin-bottom:16px}
+.pc-price{font-family:'Bebas Neue',sans-serif;font-size:52px;letter-spacing:1px;line-height:1;margin-bottom:4px}
+.pc-period{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:20px}
+.pc-features{list-style:none;margin-bottom:28px;display:flex;flex-direction:column;gap:10px}
+.pc-features li{font-size:13px;color:var(--muted);display:flex;align-items:flex-start;gap:10px;line-height:1.5}
+.pf-check{color:var(--green);flex-shrink:0;font-size:14px;margin-top:1px}
+.pf-x{color:var(--dim);flex-shrink:0}
+.pc-btn{width:100%;padding:13px;border-radius:9px;border:1.5px solid var(--b2);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;letter-spacing:.5px}
+.pc-btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.pc-btn.featured{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;border:none}
+.pc-btn.featured:hover{opacity:.85}
+
+/* ── HOW IT WORKS ── */
+.how-section{padding:100px 24px;max-width:900px;margin:0 auto}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:50px}
+.step-card{text-align:center;position:relative}
+.step-card:not(:last-child)::after{content:'→';position:absolute;top:32px;right:-20px;font-size:20px;color:var(--dim)}
+.step-num{width:60px;height:60px;border-radius:16px;background:var(--s1);border:1.5px solid var(--b2);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--cyan);margin:0 auto 16px}
+.step-title{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;margin-bottom:8px}
+.step-desc{font-size:12px;color:var(--muted);line-height:1.6;font-family:'DM Mono',monospace}
+
+/* ── TESTIMONIAL / SOCIAL PROOF ── */
+.proof-section{padding:80px 24px;background:var(--s1);border-top:1px solid var(--b1)}
+.proof-inner{max-width:900px;margin:0 auto}
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:40px}
+.proof-card{background:var(--bg);border:1px solid var(--b1);border-radius:14px;padding:22px}
+.proof-stars{color:var(--gold);font-size:14px;margin-bottom:12px;letter-spacing:2px}
+.proof-text{font-size:13px;color:var(--muted);line-height:1.7;font-style:italic;margin-bottom:16px}
+.proof-author{display:flex;align-items:center;gap:10px}
+.pa-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#000;flex-shrink:0}
+.pa-name{font-size:12px;font-weight:700;color:var(--text)}
+.pa-role{font-size:10px;color:var(--muted);font-family:'DM Mono',monospace}
+
+/* ── FAQ ── */
+.faq-section{padding:100px 24px;max-width:700px;margin:0 auto}
+.faq-list{margin-top:44px;display:flex;flex-direction:column;gap:12px}
+.faq-item{background:var(--s1);border:1px solid var(--b1);border-radius:12px;overflow:hidden;transition:border-color .2s}
+.faq-item.open{border-color:var(--b2)}
+.faq-q{padding:18px 20px;font-size:14px;font-weight:700;cursor:pointer;display:flex;justify-content:space-between;align-items:center;color:var(--text);user-select:none}
+.faq-q:hover{color:var(--cyan)}
+.faq-icon{font-size:16px;color:var(--muted);transition:transform .3s;flex-shrink:0}
+.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--cyan)}
+.faq-a{padding:0 20px 18px;font-size:13px;color:var(--muted);line-height:1.7;display:none;font-family:'DM Mono',monospace}
+.faq-item.open .faq-a{display:block}
+
+/* ── CTA BOTTOM ── */
+.cta-section{padding:100px 24px;text-align:center}
+.cta-inner{max-width:600px;margin:0 auto}
+.cta-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,72px);letter-spacing:2px;line-height:1;margin-bottom:16px}
+.cta-sub{font-size:15px;color:var(--muted);margin-bottom:40px;line-height:1.7}
+.cta-box{background:var(--s1);border:1px solid var(--b2);border-radius:18px;padding:40px;position:relative;overflow:hidden}
+.cta-box::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(0,229,255,.04),transparent 70%);pointer-events:none}
+
+/* ── FOOTER ── */
+footer{background:var(--s1);border-top:1px solid var(--b1);padding:40px 40px 28px}
+.footer-inner{max-width:900px;margin:0 auto}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:32px;flex-wrap:wrap;gap:24px}
+.footer-brand .fb-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:3px;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footer-brand .fb-tagline{font-size:12px;color:var(--muted);margin-top:4px;font-family:'DM Mono',monospace}
+.footer-links{display:flex;gap:48px}
+.fl-group h4{font-size:11px;font-weight:700;color:var(--text);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;font-family:'DM Mono',monospace}
+.fl-group ul{list-style:none;display:flex;flex-direction:column;gap:9px}
+.fl-group ul a{font-size:12px;color:var(--muted);text-decoration:none;transition:color .2s}
+.fl-group ul a:hover{color:var(--cyan)}
+.footer-bottom{border-top:1px solid var(--b1);padding-top:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.fb-copy{font-size:11px;color:var(--dim);font-family:'DM Mono',monospace}
+.fb-wa{display:inline-flex;align-items:center;gap:8px;background:rgba(0,229,255,.07);border:1px solid rgba(0,229,255,.2);color:var(--cyan);padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;transition:all .2s}
+.fb-wa:hover{background:rgba(0,229,255,.12)}
+
+/* Highlight tag */
+.hl{background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hl-gold{background:linear-gradient(135deg,var(--gold),var(--orange,#ff8030));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* scroll reveal */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){
+  nav{padding:14px 20px}
+  .nav-links{display:none}
+  .hero{padding:100px 20px 60px}
+  .hv-body{grid-template-columns:1fr 1fr}
+  .tools-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:1fr}
+  .step-card:not(:last-child)::after{display:none}
+  .proof-grid{grid-template-columns:1fr}
+  .footer-links{flex-direction:column;gap:28px}
+  .footer-top{flex-direction:column}
+  .stats-inner{flex-direction:column}
+  .stat-item{border-right:none;border-bottom:1px solid var(--b1)}
+}
+
+/* ── SETTINGS PANEL ── */
+#settings-btn{position:fixed;bottom:24px;right:24px;z-index:500;width:48px;height:48px;border-radius:50%;background:var(--s1);border:1.5px solid var(--b2);color:var(--muted);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 4px 20px rgba(0,0,0,.4)}
+#settings-btn:hover{border-color:var(--cyan);color:var(--cyan);transform:rotate(30deg)}
+#settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:998;display:none;backdrop-filter:blur(4px)}
+#settings-panel{position:fixed;right:0;top:0;bottom:0;width:100%;max-width:440px;background:var(--s1);border-left:1px solid var(--b2);z-index:999;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.8,.3,1);display:flex;flex-direction:column}
+#settings-panel.open{transform:translateX(0)}
+.sp-header{padding:24px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--s1);z-index:10}
+.sp-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sp-close{width:32px;height:32px;border-radius:8px;background:var(--s2);border:1px solid var(--b1);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .15s}
+.sp-close:hover{border-color:var(--red,#ff4545);color:#ff4545}
+.sp-body{padding:20px;flex:1}
+.sp-section{margin-bottom:24px}
+.sp-section-title{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.sp-section-title::after{content:'';flex:1;height:1px;background:var(--b1)}
+.sp-field{margin-bottom:12px}
+.sp-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:5px;display:block}
+.sp-input{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:8px;color:var(--text);font-family:'DM Mono',monospace;font-size:12px;padding:9px 12px;outline:none;transition:border-color .2s}
+.sp-input:focus{border-color:var(--cyan)}
+.sp-textarea{resize:vertical;min-height:70px;font-size:11px;line-height:1.6}
+.sp-footer{padding:16px 20px;border-top:1px solid var(--b1);display:flex;gap:10px;position:sticky;bottom:0;background:var(--s1)}
+.sp-save{flex:1;padding:12px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.sp-save:hover{opacity:.85}
+.sp-reset{padding:12px 16px;border-radius:8px;border:1px solid var(--b1);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.sp-reset:hover{border-color:var(--warn,#ffb020);color:var(--warn,#ffb020)}
+.sp-saved{text-align:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--green);padding:8px;display:none}
+
+/* QRIS upload */
+.qris-upload{border:2px dashed var(--b2);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.qris-upload:hover{border-color:var(--cyan);background:rgba(0,229,255,.02)}
+.qris-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.qris-preview{width:100%;max-height:160px;object-fit:contain;border-radius:8px;display:none;margin-top:10px}
+.qris-placeholder{font-size:12px;color:var(--muted)}
+.qris-placeholder strong{color:var(--cyan)}
+
+/* QRIS Modal */
+#qris-modal{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px);padding:20px}
+.qm-box{background:var(--s1);border:1px solid var(--b2);border-radius:16px;padding:28px;max-width:360px;width:100%;text-align:center}
+.qm-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;margin-bottom:4px}
+.qm-sub{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:20px}
+.qm-img{width:100%;max-width:240px;border-radius:10px;margin:0 auto 16px;display:block}
+.qm-name{font-size:14px;font-weight:700;margin-bottom:4px}
+.qm-note{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.6;margin-bottom:16px}
+.qm-close{width:100%;padding:11px;border-radius:8px;border:1px solid var(--b2);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.qm-close:hover{border-color:var(--cyan);color:var(--cyan)}
+
+@media(max-width:480px){#settings-panel{max-width:100%}}
+
+
+/* ── ORDER FORM MODAL ── */
+#order-overlay{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+#order-overlay.show{display:flex}
+.order-modal{background:var(--s1);border:1.5px solid var(--b2);border-radius:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative;animation:slideUp .3s cubic-bezier(.2,.8,.3,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.om-header{padding:24px 24px 18px;border-bottom:1px solid var(--b1);position:sticky;top:0;background:var(--s1);z-index:2}
+.om-badge{font-family:'DM Mono',monospace;font-size:10px;color:var(--cyan);letter-spacing:2px;margin-bottom:6px}
+.om-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px}
+.om-pkg{display:inline-block;margin-top:6px;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px}
+.om-close{position:absolute;top:18px;right:18px;width:30px;height:30px;border-radius:8px;background:var(--s2);border:1px solid var(--b1);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+.om-close:hover{border-color:#ff4545;color:#ff4545}
+.om-body{padding:20px 24px}
+.om-step{display:none}
+.om-step.active{display:block}
+
+/* Step indicator */
+.om-steps-bar{display:flex;gap:6px;margin-bottom:20px}
+.osb-item{flex:1;height:3px;border-radius:2px;background:var(--b2);transition:background .3s}
+.osb-item.done{background:var(--green)}
+.osb-item.active{background:var(--cyan)}
+
+/* Form fields */
+.om-field{margin-bottom:14px}
+.om-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.om-req{color:var(--err,#ff4545);font-size:12px}
+.om-input{width:100%;background:var(--s2);border:1.5px solid var(--b1);border-radius:9px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:11px 14px;outline:none;transition:border-color .2s}
+.om-input:focus{border-color:var(--cyan)}
+.om-input.err{border-color:var(--err,#ff4545)}
+.om-err-msg{font-size:11px;color:var(--err,#ff4545);font-family:'DM Mono',monospace;margin-top:4px;display:none}
+
+/* Summary box */
+.om-summary{background:var(--s2);border:1px solid var(--b1);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.oms-row{display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;border-bottom:1px solid var(--b1)}
+.oms-row:last-child{border-bottom:none;padding-top:10px;font-weight:700;font-size:15px}
+.oms-label{color:var(--muted);font-family:'DM Mono',monospace;font-size:11px}
+.oms-val{color:var(--text);font-weight:600}
+
+/* QRIS payment display */
+.om-qris-box{text-align:center;padding:16px;background:var(--s2);border:1px solid var(--b1);border-radius:12px;margin-bottom:16px}
+.om-qris-img{width:200px;height:200px;object-fit:contain;border-radius:10px;margin:0 auto 12px;display:block;background:white;padding:8px}
+.om-qris-name{font-size:14px;font-weight:700;margin-bottom:4px}
+.om-qris-note{font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.6}
+
+/* Upload bukti */
+.om-upload{border:2px dashed var(--b2);border-radius:9px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.om-upload:hover{border-color:var(--cyan);background:rgba(0,229,255,.02)}
+.om-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.om-upload-txt{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace}
+.om-upload-txt strong{color:var(--cyan)}
+.om-bukti-preview{width:100%;max-height:140px;object-fit:contain;border-radius:7px;margin-top:10px;display:none}
+
+/* Buttons */
+.om-btn{width:100%;padding:14px;border-radius:10px;border:none;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:8px}
+.om-btn-primary{background:linear-gradient(135deg,var(--cyan),var(--purple));color:#000}
+.om-btn-primary:hover{opacity:.85;transform:translateY(-1px)}
+.om-btn-ghost{background:transparent;border:1px solid var(--b2);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:.5px}
+.om-btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+.om-btn-wa{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff}
+.om-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+
+/* Success step */
+.om-success{text-align:center;padding:16px 0}
+.os-icon{font-size:52px;margin-bottom:14px;animation:bounceIn .5s ease}
+@keyframes bounceIn{0%{transform:scale(0)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+.os-title{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:var(--green);margin-bottom:8px}
+.os-sub{font-size:13px;color:var(--muted);line-height:1.7;font-family:'DM Mono',monospace}
+
+/* ── ADMIN NOTIF PANEL ── */
+#admin-panel{position:fixed;bottom:80px;right:24px;z-index:600;display:none}
+.ap-btn{background:linear-gradient(135deg,var(--green),#00c080);color:#000;border:none;border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,245,160,.3);font-family:'DM Sans',sans-serif;white-space:nowrap}
+.ap-badge{background:#ff4545;color:#fff;border-radius:50%;width:20px;height:20px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;font-family:'DM Mono',monospace}
+
+#orders-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:700;display:none;backdrop-filter:blur(4px)}
+#orders-panel{position:fixed;right:0;top:0;bottom:0;width:100%;max-width:500px;background:var(--s1);border-left:1px solid var(--b2);z-index:800;overflow-y:auto;transform:translateX(100%);transition:transform .3s cubic-bezier(.2,.8,.3,1)}
+#orders-panel.open{transform:translateX(0)}
+.op-header{padding:20px 24px;border-bottom:1px solid var(--b1);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--s1);z-index:2}
+.op-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--green)}
+.op-close{width:30px;height:30px;border-radius:7px;background:var(--s2);border:1px solid var(--b1);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .15s}
+.op-close:hover{border-color:#ff4545;color:#ff4545}
+.op-body{padding:16px}
+
+.order-card{background:var(--s2);border:1px solid var(--b1);border-radius:12px;padding:16px;margin-bottom:12px;transition:border-color .2s}
+.order-card.pending{border-color:rgba(255,176,32,.35)}
+.order-card.sent{border-color:rgba(0,245,160,.25)}
+.oc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.oc-name{font-size:14px;font-weight:700;color:var(--text)}
+.oc-time{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.oc-pkg{font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;font-family:'DM Mono',monospace}
+.oc-info{font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.7;margin-bottom:12px}
+.oc-bukti{width:100%;max-height:120px;object-fit:contain;border-radius:7px;margin-bottom:10px;display:block;cursor:pointer}
+.oc-actions{display:flex;gap:8px;flex-wrap:wrap}
+.oc-btn{flex:1;min-width:100px;padding:9px 12px;border-radius:8px;border:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.ocb-kirim{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff}
+.ocb-kirim:hover{opacity:.85}
+.ocb-done{background:rgba(0,245,160,.1);border:1px solid rgba(0,245,160,.3);color:var(--green)}
+.ocb-del{background:transparent;border:1px solid var(--b2);color:var(--muted)}
+.ocb-del:hover{border-color:#ff4545;color:#ff4545}
+.oc-status{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:5px}
+.ocs-pending{background:rgba(255,176,32,.1);color:var(--warn,#ffb020);border:1px solid rgba(255,176,32,.2)}
+.ocs-sent{background:rgba(0,245,160,.08);color:var(--green);border:1px solid rgba(0,245,160,.2)}
+
+</style>
+</head>
+<body>
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="orb o3"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">EFG Digital</div>
+  <ul class="nav-links">
+    <li><a href="#tools">Tools</a></li>
+    <li><a href="#pricing">Harga</a></li>
+    <li><a href="#howitworks">Cara Pakai</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <a href="#pricing" class="nav-cta">Beli Sekarang →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    Tools AI untuk Stock Creator Indonesia
+  </div>
+  <h1 class="hero-title">
+    <span class="ht-line1">CREATOR</span>
+    <span class="ht-line2">SUITE</span>
+    <span class="ht-line3">PRO</span>
+  </h1>
+  <p class="hero-sub">
+    <strong>4 tools AI powerful</strong> dalam 1 file HTML —
+    generate metadata stock, upscale gambar dengan AI, buat prompt untuk 7 platform AI.
+    Beli sekali, pakai selamanya. Tanpa langganan.
+  </p>
+  <div class="hero-btns">
+    <a href="#pricing" class="btn-hero-primary">🚀 Beli Sekarang — Mulai Rp 99rb</a>
+    <a href="#tools" class="btn-hero-ghost">Lihat Fitur ↓</a>
+  </div>
+
+  <!-- App preview mockup -->
+  <div class="hero-visual">
+    <div class="hv-frame">
+      <div class="hv-bar">
+        <div class="hv-dot" style="background:#ff5f57"></div>
+        <div class="hv-dot" style="background:#ffbd2e"></div>
+        <div class="hv-dot" style="background:#28c840"></div>
+        <div class="hv-title">EFG Digital Creator Suite — efgdigital.html</div>
+      </div>
+      <div class="hv-body">
+        <div class="hv-card">
+          <div class="hv-icon">📸</div>
+          <div class="hv-name" style="color:#fa4238">StockMeta</div>
+          <div class="hv-desc">Adobe & Shutterstock</div>
+        </div>
+        <div class="hv-card">
+          <div class="hv-icon">✍️</div>
+          <div class="hv-name" style="color:#9050ff">Prompt Builder</div>
+          <div class="hv-desc">Visual + Free text</div>
+        </div>
+        <div class="hv-card">
+          <div class="hv-icon">🎨</div>
+          <div class="hv-name" style="color:#ffc840">Prompt Gen</div>
+          <div class="hv-desc">7 Platform AI</div>
+        </div>
+        <div class="hv-card">
+          <div class="hv-icon">🔍</div>
+          <div class="hv-name" style="color:#00f0a0">AI Upscaler</div>
+          <div class="hv-desc">Clipdrop · 2×/4×</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip">
+  <div class="stats-inner">
+    <div class="stat-item reveal">
+      <div class="si-val">4</div>
+      <div class="si-label">Tools dalam 1 file</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="si-val">7</div>
+      <div class="si-label">Platform prompt</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="si-val">50</div>
+      <div class="si-label">Keywords per gambar</div>
+    </div>
+    <div class="stat-item reveal">
+      <div class="si-val">100%</div>
+      <div class="si-label">Jalan di browser</div>
+    </div>
+  </div>
+</div>
+
+<!-- TOOLS -->
+<section class="tools-section" id="tools">
+  <div class="section-eyebrow reveal"><span class="ey-line"></span>FITUR LENGKAP</div>
+  <h2 class="section-title reveal">4 Tools. <span class="hl">1 File.</span><br>Semua yang kamu butuhkan.</h2>
+  <p class="section-sub reveal">Tidak perlu install, tidak perlu server. Buka di browser, langsung pakai.</p>
+
+  <div class="tools-grid">
+    <div class="tool-card tc-meta reveal">
+      <div class="tc-num">01 / 04</div>
+      <span class="tc-icon">📸</span>
+      <div class="tc-title" style="color:#fa4238">StockMeta AI</div>
+      <div class="tc-desc">Generate metadata Adobe Stock & Shutterstock otomatis hanya dari upload gambar. Batch upload, export CSV siap upload.</div>
+      <ul class="tc-features">
+        <li>Adobe: File Type, Category, Title (200 char), Keywords</li>
+        <li>Shutterstock: Description, Category 1 & 2, Keywords</li>
+        <li>Batch upload — proses 50 foto sekaligus</li>
+        <li>Export CSV format resmi per platform</li>
+        <li>Validasi otomatis + peringatan jika over limit</li>
+      </ul>
+    </div>
+    <div class="tool-card tc-build reveal">
+      <div class="tc-num">02 / 04</div>
+      <span class="tc-icon">✍️</span>
+      <div class="tc-title" style="color:#9050ff">Prompt Builder</div>
+      <div class="tc-desc">Buat prompt gambar AI secara visual atau tulis bebas — AI sempurnakan jadi prompt profesional siap pakai.</div>
+      <ul class="tc-features">
+        <li>Mode Visual: pilih style, mood, lighting, kamera, warna</li>
+        <li>Mode Free Text: tulis bebas → AI sempurnakan</li>
+        <li>Output dioptimasi per platform tujuan</li>
+        <li>Preview prompt real-time sebelum generate</li>
+      </ul>
+    </div>
+    <div class="tool-card tc-gen reveal">
+      <div class="tc-num">03 / 04</div>
+      <span class="tc-icon">🎨</span>
+      <div class="tc-title" style="color:#ffc840">Prompt Generator</div>
+      <div class="tc-desc">Tulis tema singkat → AI generate prompt lengkap untuk 7 platform AI sekaligus dalam 1 klik.</div>
+      <ul class="tc-features">
+        <li>7 platform: MJ, SD, DALL-E, Kling, CapCut, Canva, Gemini</li>
+        <li>1, 3, atau 5 variasi prompt sekaligus</li>
+        <li>Level Simple / Detailed / Expert</li>
+        <li>Copy all semua platform sekaligus</li>
+      </ul>
+    </div>
+    <div class="tool-card tc-up reveal">
+      <div class="tc-num">04 / 04</div>
+      <span class="tc-icon">🔍</span>
+      <div class="tc-title" style="color:#00f0a0">AI Upscaler</div>
+      <div class="tc-desc">Perbesar gambar 2× atau 4× dengan AI Clipdrop (Stability AI) — hasil setara Real-ESRGAN, bukan sekadar resize.</div>
+      <ul class="tc-features">
+        <li>Engine: Clipdrop by Stability AI (deep learning)</li>
+        <li>Skala 2× dan 4× tersedia</li>
+        <li>Gratis 100 gambar/hari dengan API key pembeli</li>
+        <li>Download hasil PNG atau JPG</li>
+        <li>Compare before/after langsung di layar</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="pricing-inner">
+    <div class="section-eyebrow reveal" style="justify-content:center"><span class="ey-line"></span>PILIH PAKET<span class="ey-line"></span></div>
+    <h2 class="section-title reveal" style="text-align:center">1 Paket. <span class="hl">Semua Fitur.</span><br>Sekali Beli Selamanya</h2>
+    <p class="section-sub reveal" style="text-align:center;margin:0 auto 50px">Tidak ada biaya langganan bulanan. Beli sekali, update gratis selamanya.</p>
+
+    <div style="max-width:420px;margin:0 auto">
+
+      <!-- PRO — SINGLE PACKAGE -->
+      <div class="price-card featured reveal" style="border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 30px 80px rgba(0,229,255,.15)">
+        <div class="pc-badge" style="background:linear-gradient(135deg,var(--cyan),var(--purple));font-size:12px;padding:5px 20px">⚡ SATU PAKET — SEMUA FITUR</div>
+        <div class="pc-name" style="color:var(--cyan);font-size:24px;margin-top:8px">PRO</div>
+        <div class="pc-price" style="background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-size:64px" id="price-pro">Rp 199.000</div>
+        <div class="pc-period">bayar sekali · pakai selamanya · 3 perangkat</div>
+        <ul class="pc-features" style="margin:20px 0">
+          <li><span class="pf-check">✓</span> Semua 4 tools lengkap</li>
+          <li><span class="pf-check">✓</span> StockMeta AI — Adobe &amp; Shutterstock</li>
+          <li><span class="pf-check">✓</span> Prompt Builder + Prompt Generator</li>
+          <li><span class="pf-check">✓</span> AI Upscaler (Clipdrop)</li>
+          <li><span class="pf-check">✓</span> License key 3 browser</li>
+          <li><span class="pf-check">✓</span> Export CSV siap upload</li>
+          <li><span class="pf-check">✓</span> Update gratis selamanya</li>
+          <li><span class="pf-check">✓</span> Panduan setup API key</li>
+        </ul>
+        <button class="pc-btn featured" onclick="showPayment('Pro')" style="font-size:16px;padding:16px">🚀 Beli Sekarang — Rp 199.000</button>
+        <div style="margin-top:12px;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;text-align:center;line-height:1.7">
+          💳 Bayar via QRIS / Transfer Bank<br>📦 File dikirim via WhatsApp maks 15 menit
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Payment info -->
+    <div style="text-align:center;margin-top:32px;padding:20px;background:var(--bg);border:1px solid var(--b1);border-radius:12px" class="reveal">
+      <div style="font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;line-height:1.8">
+        <span id='payment-info-line'>💳 Pembayaran via <b style="color:var(--text)">QRIS Dana · Transfer Bank · OVO · GoPay</b></span><br>
+        📦 File dikirim via WhatsApp setelah pembayaran dikonfirmasi (maks 5 menit)<br>
+        🔑 License key digenerate otomatis setelah pembelian
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="howitworks">
+  <div class="section-eyebrow reveal"><span class="ey-line"></span>CARA PAKAI</div>
+  <h2 class="section-title reveal">Mulai dalam <span class="hl">3 Langkah</span></h2>
+  <div class="steps-grid">
+    <div class="step-card reveal">
+      <div class="step-num">01</div>
+      <div class="step-title">Beli & Aktifkan</div>
+      <div class="step-desc">Bayar → terima file HTML + license key via WhatsApp. Buka file di browser, masukkan license key.</div>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num">02</div>
+      <div class="step-title">Setup API Key</div>
+      <div class="step-desc">Daftar Gemini API (gratis) dan Clipdrop API (gratis). Paste di halaman Settings. Sekali setup selamanya.</div>
+    </div>
+    <div class="step-card reveal">
+      <div class="step-num">03</div>
+      <div class="step-title">Langsung Pakai</div>
+      <div class="step-desc">Upload gambar → generate metadata, upscale, atau buat prompt. Semua dalam 1 klik!</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="proof-section">
+  <div class="proof-inner">
+    <div class="section-eyebrow reveal" style="justify-content:center"><span class="ey-line"></span>TESTIMONI<span class="ey-line"></span></div>
+    <h2 class="section-title reveal" style="text-align:center">Dipakai oleh <span class="hl">Stock Creator</span></h2>
+    <div class="proof-grid">
+      <div class="proof-card reveal">
+        <div class="proof-stars">★★★★★</div>
+        <p class="proof-text">"Upload 50 foto langsung keluar metadata semua. CSV tinggal upload ke Adobe Stock. Hemat berjam-jam kerja manual!"</p>
+        <div class="proof-author">
+          <div class="pa-avatar">R</div>
+          <div><div class="pa-name">Rizky A.</div><div class="pa-role">Adobe Stock Contributor</div></div>
+        </div>
+      </div>
+      <div class="proof-card reveal">
+        <div class="proof-stars">★★★★★</div>
+        <p class="proof-text">"AI Upscaler-nya beneran bagus, hasil 4× masih tajam. Dulu harus pakai Topaz Gigapixel yang mahal, sekarang cukup tools ini."</p>
+        <div class="proof-author">
+          <div class="pa-avatar">S</div>
+          <div><div class="pa-name">Sari W.</div><div class="pa-role">Shutterstock Contributor</div></div>
+        </div>
+      </div>
+      <div class="proof-card reveal">
+        <div class="proof-stars">★★★★★</div>
+        <p class="proof-text">"Prompt Generator-nya keren! Sekali generate langsung dapat prompt untuk Midjourney, DALL-E, dan Kling AI sekaligus."</p>
+        <div class="proof-author">
+          <div class="pa-avatar">D</div>
+          <div><div class="pa-name">Dian P.</div><div class="pa-role">AI Art Creator</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="section-eyebrow reveal"><span class="ey-line"></span>FAQ</div>
+  <h2 class="section-title reveal">Pertanyaan <span class="hl">Umum</span></h2>
+  <div class="faq-list">
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Apakah perlu install software?<span class="faq-icon">+</span></div>
+      <div class="faq-a">Tidak! Semua tools berjalan di browser (Chrome, Firefox, Edge). Cukup buka file HTML, tidak perlu install apapun.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Berapa biaya API key Gemini dan Clipdrop?<span class="faq-icon">+</span></div>
+      <div class="faq-a">Keduanya gratis! Gemini API gratis 1.500 request/hari. Clipdrop API gratis 100 upscale/hari. Cukup untuk penggunaan normal sehari-hari.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Apa itu license key dan bagaimana cara kerjanya?<span class="faq-icon">+</span></div>
+      <div class="faq-a">License key memastikan tools hanya bisa dipakai di jumlah browser sesuai paket yang dibeli. Key divalidasi secara lokal — tidak perlu koneksi internet untuk aktivasi setelah diaktifkan pertama kali.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Apakah tools bisa dipakai untuk semua jenis gambar?<span class="faq-icon">+</span></div>
+      <div class="faq-a">Ya! Tools mendukung foto (JPG, PNG, WEBP), ilustrasi, vektor (SVG, EPS, AI, PDF), dan video (MP4, MOV) untuk metadata generation.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Paket Agency boleh dijual ulang ke orang lain?<span class="faq-icon">+</span></div>
+      <div class="faq-a">Ya, paket Agency sudah termasuk hak resell. Kamu bisa ganti nama & logo (white label) lalu jual ke klienmu dengan harga sendiri.</div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-q" onclick="toggleFaq(this)">Bagaimana cara mendapatkan update versi baru?<span class="faq-icon">+</span></div>
+      <div class="faq-a">Paket Pro dan Agency mendapat update gratis selamanya. File terbaru akan dikirim via WhatsApp saat ada update tersedia.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BOTTOM -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-box reveal">
+      <div class="cta-title">Siap <span class="hl">Mulai</span>?</div>
+      <p class="cta-sub">Bergabung dengan stock creator Indonesia yang sudah pakai EFG Creator Suite. Hemat waktu, tingkatkan produktivitas.</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <a href="#pricing" class="btn-hero-primary" style="font-size:14px">🚀 Beli Sekarang</a>
+        <a href="#" onclick="openWA('info')" class="btn-hero-ghost" style="font-size:14px">💬 Tanya via WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="fb-logo">EFG Digital</div>
+        <div class="fb-tagline">// Creator Suite for Stock Photographers</div>
+      </div>
+      <div class="footer-links">
+        <div class="fl-group">
+          <h4>Tools</h4>
+          <ul>
+            <li><a href="#tools">StockMeta AI</a></li>
+            <li><a href="#tools">Prompt Builder</a></li>
+            <li><a href="#tools">Prompt Generator</a></li>
+            <li><a href="#tools">AI Upscaler</a></li>
+          </ul>
+        </div>
+        <div class="fl-group">
+          <h4>Beli</h4>
+          <ul>
+            <li><a href="#pricing">Paket Starter</a></li>
+            <li><a href="#pricing">Paket Pro</a></li>
+            <li><a href="#pricing">Paket Agency</a></li>
+          </ul>
+        </div>
+        <div class="fl-group">
+          <h4>Info</h4>
+          <ul>
+            <li><a href="#howitworks">Cara Pakai</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#" onclick="openWA('info')">Kontak</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="fb-copy">© 2025 EFG Digital · All rights reserved</div>
+      <a href="#" onclick="openWA('info')" class="fb-wa">💬 WhatsApp Admin</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIG — loaded from localStorage
+// ═══════════════════════════════════════════════════════════
+const CFG_KEY = 'efg_landing_config';
+let CFG = {};
+
+const CFG_DEFAULTS = {
+  brand:        'EFG Digital',
+  tagline:      'Tools AI untuk Stock Creator Indonesia',
+  wa:           '6282234567890',
+  waName:       'Admin EFG Digital',
+  price1:       '199.000',
+  price2:       '199.000',
+    payment:      'QRIS Dana · Transfer Bank · OVO · GoPay',
+  rekeningName: '',
+  rekeningNo:   '',
+  waExtra:      '',
+  qrisImg:      '',
+};
+
+function loadConfig() {
+  try { CFG = { ...CFG_DEFAULTS, ...JSON.parse(localStorage.getItem(CFG_KEY) || '{}') }; }
+  catch(e) { CFG = { ...CFG_DEFAULTS }; }
+}
+
+function applyConfig() {
+  // Brand name
+  document.querySelectorAll('.nav-logo,.fb-logo').forEach(el => el.textContent = CFG.brand);
+  // Tagline hero badge
+  const badge = document.querySelector('.hero-badge');
+  if (badge) badge.childNodes[badge.childNodes.length-1].textContent = ' ' + CFG.tagline;
+  // Prices
+  updatePrices();
+  // Payment info
+  const payLine = document.getElementById('payment-info-line');
+  if (payLine) payLine.innerHTML = `💳 Pembayaran via <b style="color:var(--text)">${CFG.payment}</b>`;
+  // Nav brand
+  const navLogo = document.querySelector('.nav-logo');
+  if (navLogo) navLogo.textContent = CFG.brand;
+}
+
+function updatePrices() {
+  const proEl = document.getElementById('price-pro');
+  if (proEl) proEl.textContent = 'Rp ' + CFG.price1;
+  const heroBtn = document.querySelector('.btn-hero-primary');
+  if (heroBtn) heroBtn.textContent = '🚀 Beli Sekarang — Rp ' + CFG.price1;
+}
+
+// ── FAQ ──────────────────────────────────────────────────────
+function toggleFaq(el) {
+  const item = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+
+// ── WHATSAPP ─────────────────────────────────────────────────
+function openWA(pkg) {
+  const num = CFG.wa || '6282234567890';
+  const brand = CFG.brand || 'EFG Creator Suite';
+  const extra = CFG.waExtra ? '\n\n' + CFG.waExtra : '';
+  const msgs = {
+    'Pro':      `Halo, saya mau beli *${brand}* paket *Pro* (Rp 199.000). Mohon info cara pembayarannya.${extra}`,
+    'Agency':   `Halo, saya mau beli *${brand}* paket *Agency* (Rp ${CFG.price2}). Mohon info cara pembayarannya.${extra}`,
+    'info':     `Halo, saya mau tanya tentang *${brand}*.${extra}`,
+  };
+  const msg = encodeURIComponent(msgs[pkg] || msgs['info']);
+  window.open('https://wa.me/' + num + '?text=' + msg, '_blank');
+}
+
+// ── ORDER SYSTEM ─────────────────────────────────────────────
+const ORDERS_KEY = 'efg_orders';
+let orders = JSON.parse(localStorage.getItem(ORDERS_KEY) || '[]');
+let currentOrder = {};
+let orderStep = 1;
+let buktiBayarData = '';
+
+function showPayment(pkg) {
+  currentOrder = {
+    pkg,
+    price: CFG.price1,
+    id: 'ORD-' + Date.now().toString(36).toUpperCase()
+  };
+  orderStep = 1;
+  buktiBayarData = '';
+  // Reset form
+  ['om-nama','om-wa','om-email'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el){ el.value=''; el.classList.remove('err'); }
+  });
+  document.getElementById('om-err-global').style.display = 'none';
+  // Set package display
+  const pkgColors = {Starter:'rgba(0,229,255,.15)',Pro:'rgba(144,80,255,.15)',Agency:'rgba(255,200,64,.15)'};
+  const pkgText   = {Starter:'var(--cyan)',Pro:'var(--purple)',Agency:'var(--gold)'};
+  const pkgEl = document.getElementById('om-pkg-badge');
+  pkgEl.textContent = pkg + ' — Rp ' + currentOrder.price;
+  pkgEl.style.background = pkgColors[pkg] || 'rgba(0,229,255,.1)';
+  pkgEl.style.color = pkgText[pkg] || 'var(--cyan)';
+  // Show modal
+  document.getElementById('order-overlay').classList.add('show');
+  goStep(1);
+}
+
+function closeOrder() {
+  document.getElementById('order-overlay').classList.remove('show');
+}
+
+function goStep(step) {
+  orderStep = step;
+  document.querySelectorAll('.om-step').forEach((s,i) => s.classList.toggle('active', i+1===step));
+  document.querySelectorAll('.osb-item').forEach((b,i) => {
+    b.classList.toggle('done',   i+1 < step);
+    b.classList.toggle('active', i+1 === step);
+  });
+  // Populate summary on step 2 & 3
+  if (step >= 2) {
+    document.getElementById('oms-pkg').textContent   = currentOrder.pkg;
+    document.getElementById('oms-price').textContent = 'Rp ' + currentOrder.price;
+    document.getElementById('oms-nama').textContent  = currentOrder.nama || '—';
+    document.getElementById('oms-wa').textContent    = currentOrder.wa   || '—';
+  }
+  if (step === 2) {
+    // Show QRIS
+    if (CFG.qrisImg) {
+      document.getElementById('om-qris-img').src = CFG.qrisImg;
+      document.getElementById('om-qris-img').style.display = 'block';
+      document.getElementById('om-qris-name').textContent = 'a.n. ' + (CFG.rekeningName || CFG.waName || '—');
+      if (CFG.rekeningNo) document.getElementById('om-qris-rekno').textContent = 'No: ' + CFG.rekeningNo;
+    } else {
+      document.getElementById('om-no-qris').style.display = 'block';
+    }
+  }
+}
+
+function omNextStep1() {
+  const nama  = document.getElementById('om-nama').value.trim();
+  const wa    = document.getElementById('om-wa').value.trim().replace(/[^0-9]/g,'');
+  const email = document.getElementById('om-email').value.trim();
+  let valid = true;
+  if (!nama)  { document.getElementById('om-nama').classList.add('err');  valid=false; }
+  else          document.getElementById('om-nama').classList.remove('err');
+  if (!wa || wa.length < 10) { document.getElementById('om-wa').classList.add('err'); valid=false; }
+  else                         document.getElementById('om-wa').classList.remove('err');
+  if (!valid) {
+    document.getElementById('om-err-global').style.display='block';
+    document.getElementById('om-err-global').textContent='⚠ Lengkapi nama dan nomor WA terlebih dahulu.';
+    return;
+  }
+  currentOrder.nama  = nama;
+  currentOrder.wa    = wa;
+  currentOrder.email = email;
+  goStep(2);
+}
+
+function omBuktiUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    buktiBayarData = ev.target.result;
+    document.getElementById('om-bukti-img').src = ev.target.result;
+    document.getElementById('om-bukti-img').style.display = 'block';
+    document.getElementById('om-bukti-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function omConfirmPayment() {
+  // Save order
+  const order = {
+    ...currentOrder,
+    bukti: buktiBayarData,
+    time: new Date().toLocaleString('id-ID'),
+    ts: Date.now(),
+    status: 'pending'
+  };
+  orders.unshift(order);
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+  // Notify admin via WA
+  notifyAdmin(order);
+  // Update badge
+  updateAdminBadge();
+  goStep(3);
+}
+
+function notifyAdmin(order) {
+  const adminWA = CFG.wa || '6282234567890';
+  const msg = encodeURIComponent(
+`🔔 *PESANAN BARU — ${order.id}*
+
+📦 Paket: *${order.pkg}* (Rp ${order.price})
+👤 Nama: *${order.nama}*
+📱 WA: *${order.wa}*
+${order.email ? '📧 Email: ' + order.email : ''}
+
+📋 *Buka Admin Panel di landing page untuk kirim file.*
+_(Klik tombol 🟢 Admin di pojok kanan bawah)_`
+  );
+  window.open('https://wa.me/' + adminWA + '?text=' + msg, '_blank');
+}
+
+function omSendViaWA() {
+  // Buyer wants to send bukti via WA directly
+  const adminWA = CFG.wa || '6282234567890';
+  const msg = encodeURIComponent(
+`Halo Admin, saya sudah bayar paket *${currentOrder.pkg}*.
+Nama: *${currentOrder.nama}*
+WA: *${currentOrder.wa}*
+Order ID: ${currentOrder.id}
+(Bukti bayar saya kirim di sini)`
+  );
+  window.open('https://wa.me/' + adminWA + '?text=' + msg, '_blank');
+}
+
+function closeQRIS() { /* legacy */ }
+
+// ── ADMIN PANEL ───────────────────────────────────────────────
+function updateAdminBadge() {
+  const pending = orders.filter(o=>o.status==='pending').length;
+  const btn = document.getElementById('admin-notif-btn');
+  const badge = document.getElementById('admin-badge');
+  if (pending > 0) {
+    document.getElementById('admin-panel').style.display = 'block';
+    badge.textContent = pending;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function openAdminPanel() {
+  renderOrders();
+  document.getElementById('orders-overlay').style.display = 'block';
+  document.getElementById('orders-panel').classList.add('open');
+}
+function closeAdminPanel() {
+  document.getElementById('orders-overlay').style.display = 'none';
+  document.getElementById('orders-panel').classList.remove('open');
+}
+
+function renderOrders() {
+  const body = document.getElementById('orders-body');
+  if (!orders.length) {
+    body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--muted);font-family:DM Mono,monospace;font-size:12px">Belum ada pesanan masuk.</div>';
+    return;
+  }
+  body.innerHTML = orders.map((o,i) => {
+    const pkgC = o.pkg==='Starter'?'var(--cyan)':o.pkg==='Pro'?'var(--purple)':'var(--gold)';
+    const statusBadge = o.status==='sent'
+      ? '<span class="oc-status ocs-sent">✓ TERKIRIM</span>'
+      : '<span class="oc-status ocs-pending">⏳ PENDING</span>';
+    return `<div class="order-card ${o.status}" id="oc-${i}">
+      <div class="oc-top">
+        <div>
+          <div class="oc-name">${o.nama} ${statusBadge}</div>
+          <div class="oc-time">${o.id} · ${o.time}</div>
+        </div>
+        <span class="oc-pkg" style="background:rgba(0,0,0,.3);color:${pkgC};border:1px solid ${pkgC}20">${o.pkg}</span>
+      </div>
+      <div class="oc-info">
+        📱 WA: <b style="color:var(--text)">${o.wa}</b>${o.email?'<br>📧 '+o.email:''}<br>
+        💰 Rp ${o.price}
+      </div>
+      ${o.bukti ? `<img src="${o.bukti}" class="oc-bukti" onclick="window.open(this.src,'_blank')" title="Klik untuk perbesar">` : '<div style="font-size:11px;color:var(--muted);font-family:DM Mono,monospace;margin-bottom:10px">⚠ Belum ada bukti bayar</div>'}
+      <div class="oc-actions">
+        <button class="oc-btn ocb-kirim" onclick="kirimKePembeli(${i})">📲 Kirim via WA</button>
+        <button class="oc-btn ocb-done" onclick="tandaiSelesai(${i})">✓ Selesai</button>
+        <button class="oc-btn ocb-del" onclick="hapusOrder(${i})">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function kirimKePembeli(i) {
+  const o = orders[i];
+  const brand = CFG.brand || 'EFG Creator Suite';
+  // Generate license key for this order
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const genSeg = n => Array.from({length:n},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+  const s1=genSeg(4),s2=genSeg(4),s3=genSeg(4);
+  let hash=0; const raw=s1+s2+s3;
+  for(let c=0;c<raw.length;c++) hash=((hash<<5)-hash)+raw.charCodeAt(c);
+  const chk = Math.abs(hash).toString(36).toUpperCase().padStart(4,'0').slice(0,4);
+  const licKey = `EFG-${s1}-${s2}-${s3}-${chk}`;
+
+  const maxDev = o.pkg==='Pro'?3:999;
+  const waNum = o.wa;
+  const msg = encodeURIComponent(
+`Halo *${o.nama}*! 👋
+
+Terima kasih sudah membeli *${brand}* paket *${o.pkg}*. 🎉
+
+🔑 *License Key kamu:*
+\`${licKey}\`
+
+📦 *Detail Paket:*
+• Paket: ${o.pkg}
+• Max aktivasi: ${maxDev} browser
+• Masa berlaku: Selamanya ✅
+
+📥 *File tools akan dikirim terpisah via WA ini.*
+
+📝 *Cara aktivasi:*
+1. Buka file efg-creator-suite.html di browser
+2. Masukkan license key di atas
+3. Klik Aktivasi ✅
+4. Setup API key (panduan ada di dalam app)
+
+❓ Ada pertanyaan? Balas pesan ini.
+_${brand}_`
+  );
+  window.open('https://wa.me/' + waNum + '?text=' + msg, '_blank');
+  // Mark as sent
+  orders[i].status = 'sent';
+  orders[i].licKey = licKey;
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+  updateAdminBadge();
+  renderOrders();
+}
+
+function tandaiSelesai(i) {
+  orders[i].status = 'sent';
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+  updateAdminBadge();
+  renderOrders();
+}
+
+function hapusOrder(i) {
+  if (confirm('Hapus order ini?')) {
+    orders.splice(i,1);
+    localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
+    updateAdminBadge();
+    renderOrders();
+  }
+}
+
+// ── SETTINGS PANEL ───────────────────────────────────────────
+function openSettings() {
+  // Populate fields
+  document.getElementById('cfg-brand').value        = CFG.brand;
+  document.getElementById('cfg-tagline').value      = CFG.tagline;
+  document.getElementById('cfg-wa').value           = CFG.wa;
+  document.getElementById('cfg-wa-name').value      = CFG.waName;
+  document.getElementById('cfg-price1').value       = CFG.price1;
+  document.getElementById('cfg-price2').value       = CFG.price2;
+    document.getElementById('cfg-payment').value      = CFG.payment;
+  document.getElementById('cfg-rekening-name').value = CFG.rekeningName;
+  document.getElementById('cfg-rekening-no').value  = CFG.rekeningNo;
+  document.getElementById('cfg-wa-extra').value     = CFG.waExtra;
+  // QRIS preview
+  if (CFG.qrisImg) {
+    document.getElementById('qris-preview').src = CFG.qrisImg;
+    document.getElementById('qris-preview').style.display = 'block';
+    document.getElementById('qris-placeholder').style.display = 'none';
+  }
+  document.getElementById('settings-overlay').style.display = 'block';
+  document.getElementById('settings-panel').classList.add('open');
+  document.getElementById('sp-saved').style.display = 'none';
+}
+
+function closeSettings() {
+  document.getElementById('settings-overlay').style.display = 'none';
+  document.getElementById('settings-panel').classList.remove('open');
+}
+
+function saveSettings() {
+  CFG.brand        = document.getElementById('cfg-brand').value.trim()         || CFG_DEFAULTS.brand;
+  CFG.tagline      = document.getElementById('cfg-tagline').value.trim()       || CFG_DEFAULTS.tagline;
+  CFG.wa           = document.getElementById('cfg-wa').value.trim().replace(/[^0-9]/g,'') || CFG_DEFAULTS.wa;
+  CFG.waName       = document.getElementById('cfg-wa-name').value.trim()       || CFG_DEFAULTS.waName;
+  CFG.price1       = document.getElementById('cfg-price1').value.trim()        || CFG_DEFAULTS.price1;
+  CFG.price2       = document.getElementById('cfg-price2').value.trim()        || CFG_DEFAULTS.price2;
+  CFG.payment      = document.getElementById('cfg-payment').value.trim()       || CFG_DEFAULTS.payment;
+  CFG.rekeningName = document.getElementById('cfg-rekening-name').value.trim();
+  CFG.rekeningNo   = document.getElementById('cfg-rekening-no').value.trim();
+  CFG.waExtra      = document.getElementById('cfg-wa-extra').value.trim();
+
+  localStorage.setItem(CFG_KEY, JSON.stringify(CFG));
+  applyConfig();
+
+  const saved = document.getElementById('sp-saved');
+  saved.style.display = 'block';
+  setTimeout(() => saved.style.display = 'none', 2500);
+}
+
+function resetSettings() {
+  if (confirm('Reset semua pengaturan ke default?')) {
+    CFG = { ...CFG_DEFAULTS };
+    localStorage.removeItem(CFG_KEY);
+    applyConfig();
+    closeSettings();
+  }
+}
+
+// ── QRIS UPLOAD ───────────────────────────────────────────────
+function uploadQRIS(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 2 * 1024 * 1024) { alert('File terlalu besar! Max 2MB.'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    CFG.qrisImg = ev.target.result;
+    document.getElementById('qris-preview').src = ev.target.result;
+    document.getElementById('qris-preview').style.display = 'block';
+    document.getElementById('qris-placeholder').style.display = 'none';
+    localStorage.setItem(CFG_KEY, JSON.stringify(CFG));
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearQRIS() {
+  CFG.qrisImg = '';
+  document.getElementById('qris-preview').style.display = 'none';
+  document.getElementById('qris-preview').src = '';
+  document.getElementById('qris-placeholder').style.display = 'block';
+  document.getElementById('cfg-qris-file').value = '';
+  localStorage.setItem(CFG_KEY, JSON.stringify(CFG));
+}
+
+function testQRIS() {
+  if (!CFG.qrisImg) { alert('Upload foto QRIS dulu!'); return; }
+  showPayment('Pro');
+}
+
+// ── SCROLL REVEAL ─────────────────────────────────────────────
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// ── NAV SCROLL EFFECT ─────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  nav.style.borderBottomColor = window.scrollY > 50 ? 'rgba(255,255,255,.07)' : 'rgba(255,255,255,.04)';
+});
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadConfig();
+  applyConfig();
+  updateAdminBadge();
+});
+</script>
+
+
+<!-- ══ ORDER FORM MODAL ══ -->
+<div id="order-overlay">
+  <div class="order-modal">
+    <div class="om-header">
+      <div class="om-badge">📦 FORM PEMESANAN</div>
+      <div class="om-title">Beli Sekarang</div>
+      <span class="om-pkg" id="om-pkg-badge">Pro — Rp 149.000</span>
+      <div class="om-close" onclick="closeOrder()">✕</div>
+    </div>
+    <div class="om-body">
+      <!-- Step bar -->
+      <div class="om-steps-bar">
+        <div class="osb-item active"></div>
+        <div class="osb-item"></div>
+        <div class="osb-item"></div>
+      </div>
+
+      <!-- STEP 1: Data pembeli -->
+      <div class="om-step active" id="om-step-1">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;margin-bottom:16px">STEP 1 — Data Kamu</div>
+        <div class="om-field">
+          <div class="om-label">Nama Lengkap <span class="om-req">*</span></div>
+          <input class="om-input" id="om-nama" placeholder="Contoh: Budi Santoso" autocomplete="name">
+        </div>
+        <div class="om-field">
+          <div class="om-label">Nomor WhatsApp <span class="om-req">*</span></div>
+          <input class="om-input" id="om-wa" placeholder="08123456789" type="tel" autocomplete="tel">
+        </div>
+        <div class="om-field">
+          <div class="om-label">Email (opsional)</div>
+          <input class="om-input" id="om-email" placeholder="email@gmail.com" type="email" autocomplete="email">
+        </div>
+        <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;background:var(--s2);border-radius:8px;padding:10px 12px;margin-bottom:16px;line-height:1.7">
+          🔒 Data kamu aman — hanya digunakan untuk pengiriman file.
+        </div>
+        <div class="om-err-msg" id="om-err-global" style="display:none;margin-bottom:10px;padding:8px 12px;background:rgba(255,69,69,.08);border:1px solid rgba(255,69,69,.2);border-radius:7px;color:#ff4545;font-size:12px"></div>
+        <button class="om-btn om-btn-primary" onclick="omNextStep1()">LANJUT → BAYAR</button>
+        <button class="om-btn om-btn-ghost" onclick="closeOrder()">Batal</button>
+      </div>
+
+      <!-- STEP 2: Pembayaran -->
+      <div class="om-step" id="om-step-2">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;margin-bottom:16px">STEP 2 — Pembayaran</div>
+        <!-- Summary -->
+        <div class="om-summary">
+          <div class="oms-row"><span class="oms-label">Paket</span><span class="oms-val" id="oms-pkg">—</span></div>
+          <div class="oms-row"><span class="oms-label">Nama</span><span class="oms-val" id="oms-nama">—</span></div>
+          <div class="oms-row"><span class="oms-label">WA</span><span class="oms-val" id="oms-wa">—</span></div>
+          <div class="oms-row"><span class="oms-label">Total Bayar</span><span class="oms-val" style="color:var(--cyan);font-size:18px" id="oms-price">—</span></div>
+        </div>
+        <!-- QRIS -->
+        <div class="om-qris-box">
+          <div id="om-no-qris" style="display:none;font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;margin-bottom:10px">⚠ QR belum diupload admin. Transfer manual ya.</div>
+          <img class="om-qris-img" id="om-qris-img" alt="QRIS" style="display:none">
+          <div class="om-qris-name" id="om-qris-name"></div>
+          <div class="om-qris-note" id="om-qris-rekno"></div>
+          <div class="om-qris-note" style="margin-top:6px">Scan QR → Transfer sesuai nominal → Screenshot bukti bayar</div>
+        </div>
+        <!-- Upload bukti -->
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Upload Bukti Bayar</div>
+        <div class="om-upload">
+          <input type="file" accept="image/*" onchange="omBuktiUpload(event)">
+          <div class="om-upload-txt" id="om-bukti-placeholder"><strong>📸 Klik atau drag foto bukti transfer</strong><br>JPG, PNG · Max 5MB</div>
+          <img class="om-bukti-preview" id="om-bukti-img" alt="bukti">
+        </div>
+        <div style="margin-top:16px;display:flex;flex-direction:column;gap:8px">
+          <button class="om-btn om-btn-primary" onclick="omConfirmPayment()">✅ KONFIRMASI PEMBAYARAN</button>
+          <button class="om-btn om-btn-wa" onclick="omSendViaWA()" style="font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px">💬 Kirim Bukti via WhatsApp</button>
+          <button class="om-btn om-btn-ghost" onclick="goStep(1)">← Kembali</button>
+        </div>
+      </div>
+
+      <!-- STEP 3: Sukses -->
+      <div class="om-step" id="om-step-3">
+        <div class="om-success">
+          <div class="os-icon">🎉</div>
+          <div class="os-title">Pesanan Diterima!</div>
+          <div class="os-sub">
+            Admin sudah mendapat notifikasi WA.<br>
+            File + license key akan dikirim ke WA kamu<br>
+            <b style="color:var(--text)">dalam 5–15 menit.</b><br><br>
+            Pertanyaan? Chat admin langsung:
+          </div>
+          <button class="om-btn om-btn-wa" style="margin-top:16px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:.5px" onclick="openWA('info')">
+            💬 Chat Admin WhatsApp
+          </button>
+          <button class="om-btn om-btn-ghost" onclick="closeOrder()" style="margin-top:8px">Tutup</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADMIN NOTIF PANEL ══ -->
+<div id="admin-panel">
+  <button id="admin-notif-btn" class="ap-btn" onclick="openAdminPanel()">
+    🟢 Admin — Pesanan Masuk
+    <span class="ap-badge" id="admin-badge">0</span>
+  </button>
+</div>
+
+<!-- ORDERS PANEL -->
+<div id="orders-overlay" onclick="closeAdminPanel()"></div>
+<div id="orders-panel">
+  <div class="op-header">
+    <div class="op-title">📦 Pesanan Masuk</div>
+    <div class="op-close" onclick="closeAdminPanel()">✕</div>
+  </div>
+  <div class="op-body" id="orders-body"></div>
+</div>
+
+<!-- ⚙️ SETTINGS BUTTON -->
+<button id="settings-btn" onclick="openSettings()" title="Pengaturan">⚙️</button>
+
+<!-- SETTINGS OVERLAY -->
+<div id="settings-overlay" onclick="closeSettings()"></div>
+
+<!-- SETTINGS PANEL -->
+<div id="settings-panel">
+  <div class="sp-header">
+    <div class="sp-title">⚙️ Pengaturan</div>
+    <div class="sp-close" onclick="closeSettings()">✕</div>
+  </div>
+  <div class="sp-body">
+
+    <!-- IDENTITAS -->
+    <div class="sp-section">
+      <div class="sp-section-title">Identitas Toko</div>
+      <div class="sp-field">
+        <label class="sp-label">Nama Brand / Toko</label>
+        <input class="sp-input" id="cfg-brand" placeholder="EFG Digital">
+      </div>
+      <div class="sp-field">
+        <label class="sp-label">Tagline</label>
+        <input class="sp-input" id="cfg-tagline" placeholder="Tools AI untuk Stock Creator Indonesia">
+      </div>
+    </div>
+
+    <!-- KONTAK -->
+    <div class="sp-section">
+      <div class="sp-section-title">Kontak & WhatsApp</div>
+      <div class="sp-field">
+        <label class="sp-label">Nomor WhatsApp (format: 628xxx)</label>
+        <input class="sp-input" id="cfg-wa" placeholder="628123456789" type="tel">
+      </div>
+      <div style="font-size:10px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:-6px;margin-bottom:12px">
+        ⚠️ Tanpa tanda + dan spasi. Contoh: 6281234567890
+      </div>
+      <div class="sp-field">
+        <label class="sp-label">Nama Pemilik WA (untuk pesan QRIS)</label>
+        <input class="sp-input" id="cfg-wa-name" placeholder="Admin EFG Digital">
+      </div>
+    </div>
+
+    <!-- HARGA -->
+    <div class="sp-section">
+      <div class="sp-section-title">Harga Paket</div>
+      <div class="sp-field">
+        <label class="sp-label">Harga Paket Pro</label>
+        <input class="sp-input" id="cfg-price1" placeholder="199.000">
+      </div>
+    </div>
+
+    <!-- PEMBAYARAN -->
+    <div class="sp-section">
+      <div class="sp-section-title">Info Pembayaran</div>
+      <div class="sp-field">
+        <label class="sp-label">Metode Pembayaran (tampil di bawah harga)</label>
+        <input class="sp-input" id="cfg-payment" placeholder="QRIS Dana · Transfer BCA · OVO · GoPay">
+      </div>
+      <div class="sp-field">
+        <label class="sp-label">Nama Rekening / QRIS (a.n.)</label>
+        <input class="sp-input" id="cfg-rekening-name" placeholder="ZULHOIRI">
+      </div>
+      <div class="sp-field">
+        <label class="sp-label">Nomor Rekening (opsional)</label>
+        <input class="sp-input" id="cfg-rekening-no" placeholder="1234567890">
+      </div>
+    </div>
+
+    <!-- QRIS UPLOAD -->
+    <div class="sp-section">
+      <div class="sp-section-title">Upload QR Code / QRIS</div>
+      <div class="qris-upload" id="qris-drop">
+        <input type="file" id="cfg-qris-file" accept="image/*" onchange="uploadQRIS(event)">
+        <div class="qris-placeholder" id="qris-placeholder">
+          <div style="font-size:28px;margin-bottom:6px">📱</div>
+          <strong>Klik atau drag foto QRIS</strong><br>
+          JPG, PNG, WEBP · Max 2MB
+        </div>
+        <img class="qris-preview" id="qris-preview" alt="QRIS">
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button onclick="testQRIS()" style="flex:1;padding:8px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .2s" onmouseover="this.style.borderColor='var(--cyan)';this.style.color='var(--cyan)'" onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--muted)'">👁 Preview QRIS</button>
+        <button onclick="clearQRIS()" style="flex:1;padding:8px;border-radius:7px;border:1px solid var(--b2);background:transparent;color:var(--muted);font-size:11px;cursor:pointer;font-family:'DM Mono',monospace;transition:all .2s" onmouseover="this.style.borderColor='#ff4545';this.style.color='#ff4545'" onmouseout="this.style.borderColor='var(--b2)';this.style.color='var(--muted)'">🗑 Hapus QRIS</button>
+      </div>
+    </div>
+
+    <!-- PESAN WA CUSTOM -->
+    <div class="sp-section">
+      <div class="sp-section-title">Pesan WhatsApp (opsional)</div>
+      <div class="sp-field">
+        <label class="sp-label">Tambahan pesan setelah template otomatis</label>
+        <textarea class="sp-input sp-textarea" id="cfg-wa-extra" placeholder="Contoh: Balas pesan ini untuk konfirmasi pembayaran 🙏"></textarea>
+      </div>
+    </div>
+
+  </div>
+  <div class="sp-footer">
+    <button class="sp-reset" onclick="resetSettings()">↺ Reset</button>
+    <button class="sp-save" onclick="saveSettings()">💾 Simpan Pengaturan</button>
+  </div>
+  <div class="sp-saved" id="sp-saved">✅ Tersimpan!</div>
+</div>
+
+<!-- QRIS MODAL -->
+<div id="qris-modal" onclick="closeQRIS()">
+  <div class="qm-box" onclick="event.stopPropagation()">
+    <div class="qm-title">💳 Pembayaran</div>
+    <div class="qm-sub" id="qm-sub">Scan QR Code di bawah</div>
+    <img class="qm-img" id="qm-img" alt="QRIS">
+    <div class="qm-name" id="qm-name">a.n. —</div>
+    <div class="qm-note" id="qm-note">Setelah bayar, screenshot bukti transfer<br>dan kirim ke WhatsApp admin.</div>
+    <button class="qm-close" onclick="closeQRIS()">✕ Tutup</button>
+  </div>
+</div>
+
+</body>
+</html>
